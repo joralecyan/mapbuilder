@@ -19,4 +19,6 @@ Route::post('/register',  [\App\Http\Controllers\AuthController::class, 'registe
 
 Route::group(['middleware' =>  'auth:sanctum'], function (){
     Route::get('/user',  [\App\Http\Controllers\UserController::class, 'getUser']);
+    Route::get('/games',  [\App\Http\Controllers\GameController::class, 'getGames']);
+    Route::post('/games',  [\App\Http\Controllers\GameController::class, 'store']);
 });
