@@ -40,4 +40,21 @@ class GameController extends Controller
 
         return response()->json(['status' => 'success', 'game_id' => $game->id], 200);
     }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function enroll($id, Request $request)
+    {
+        $user = $request->user();
+        $game = Game::find($id);
+        Board::create([
+            'game_id' => $game->id,
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json(['status' => 'success'], 200);
+    }
 }
