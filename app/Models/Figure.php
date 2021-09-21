@@ -21,18 +21,8 @@ class Figure extends Model
     protected $fillable = ['figure', 'is_extra'];
 
     /**
-     * @return BelongsToMany
+     * @var string[]
      */
-    public function items(): BelongsToMany
-    {
-        return $this->belongsToMany(Item::class, 'task_items');
-    }
+    protected $casts = ['figure' => 'array'];
 
-    /**
-     * @return BelongsToMany
-     */
-    public function figures(): BelongsToMany
-    {
-        return $this->belongsToMany(Figure::class, 'task_figures');
-    }
 }
