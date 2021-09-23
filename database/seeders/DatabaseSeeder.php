@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SeasonSeeder::class);
         $this->call(FigureSeeder::class);
         $this->call(TaskSeeder::class);
+        $this->call(MissionSeeder::class);
     }
 }
