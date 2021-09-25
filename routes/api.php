@@ -20,7 +20,11 @@ Route::post('/register',  [\App\Http\Controllers\AuthController::class, 'registe
 Route::group(['middleware' =>  'auth:sanctum'], function (){
     Route::get('/user',  [\App\Http\Controllers\UserController::class, 'getUser']);
 
+    Route::get('/games/{id}',  [\App\Http\Controllers\GameController::class, 'getGame']);
     Route::get('/games',  [\App\Http\Controllers\GameController::class, 'getGames']);
     Route::post('/games',  [\App\Http\Controllers\GameController::class, 'store']);
-    Route::post('/game/{id}/enroll',  [\App\Http\Controllers\GameController::class, 'enroll']);
+    Route::post('/games/{id}/enroll',  [\App\Http\Controllers\GameController::class, 'enroll']);
+
+    Route::get('/boards/{id}',  [\App\Http\Controllers\BoardController::class, 'getBoard']);
+    Route::patch('/boards/{id}',  [\App\Http\Controllers\BoardController::class, 'update']);
 });

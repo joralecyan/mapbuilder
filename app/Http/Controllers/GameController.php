@@ -10,6 +10,7 @@ use App\Models\Game;
 use App\Models\Mission;
 use App\Services\BoardService;
 use App\Services\GameService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
@@ -27,11 +28,22 @@ class GameController extends Controller
     }
 
     /**
+     * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGames()
+    public function getGame($id): JsonResponse
     {
-        $games = Game::withCount('boards')->pending()->paginate(m_per_page());
+        $game = Game::find($id);
+        $game->load('boards.user', 'missions');
+        return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getGames(): JsonResponse
+    {
+        $games = Game::withCount('boards')->pending()->latest()->paginate(m_per_page());
         return response()->json(['status' => 'success', 'games' =>  GameResource::collection($games)], 200);
     }
 
@@ -39,7 +51,7 @@ class GameController extends Controller
      * @param GameRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(GameRequest $request)
+    public function store(GameRequest $request): JsonResponse
     {
         $user = $request->user();
 
@@ -58,7 +70,7 @@ class GameController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function enroll($id, Request $request)
+    public function enroll($id, Request $request): JsonResponse
     {
         $user = $request->user();
         $game = Game::find($id);
