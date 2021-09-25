@@ -16,7 +16,7 @@ class BoardService
         Board::create([
             'game_id' => $game_id,
             'user_id' => $user_id,
-            'map' => BoardService::getEmptyMap()
+            'map' => self::getEmptyMap()
         ]);
     }
 
