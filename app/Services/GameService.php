@@ -13,7 +13,7 @@ class GameService
     /**
      * @param Game $game
      */
-    public function storeMissions(Game $game)
+    public function storeMissions(Game $game): void
     {
         $tree_mission = Mission::wherType('tree')->inRandomOrder()->take(1)->pluck('id')->toArray();
         $figure_mission = Mission::wherType('figure')->inRandomOrder()->take(1)->pluck('id')->toArray();

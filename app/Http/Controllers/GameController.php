@@ -8,12 +8,14 @@ use App\Http\Resources\UserResource;
 use App\Models\Board;
 use App\Models\Game;
 use App\Models\Mission;
+use App\Services\BoardService;
 use App\Services\GameService;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
     protected $game_service;
+    protected $board_service;
 
     /**
      * GameController constructor.
@@ -21,6 +23,7 @@ class GameController extends Controller
     public function __construct()
     {
         $this->game_service = new GameService();
+        $this->board_service = new BoardService();
     }
 
     /**
@@ -45,10 +48,7 @@ class GameController extends Controller
             'user_id' => $user->id,
         ]);
 
-        Board::create([
-            'game_id' => $game->id,
-            'user_id' => $user->id,
-        ]);
+        $this->board_service->initBoard($game->id, $user->id);
 
         return response()->json(['status' => 'success', 'game_id' => $game->id], 200);
     }
@@ -62,10 +62,9 @@ class GameController extends Controller
     {
         $user = $request->user();
         $game = Game::find($id);
-        Board::create([
-            'game_id' => $game->id,
-            'user_id' => $user->id,
-        ]);
+
+        $this->board_service->initBoard($game->id, $user->id);
+
         if(count($game->boards) == $game->max_count){
             $this->game_service->storeMissions($game);
         }

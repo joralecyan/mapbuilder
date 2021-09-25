@@ -17,7 +17,7 @@ class CreateBoardsTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('game_id');
-            $table->text('data')->nullable();
+            $table->text('map');
             $table->timestamps();
         });
     }
