@@ -23,7 +23,7 @@ class Game extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['user_id', 'status', 'max_count'];
+    protected $fillable = ['user_id', 'status', 'max_count', 'season_id'];
 
     /**
      * @return BelongsTo
@@ -31,6 +31,14 @@ class Game extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function season(): BelongsTo
+    {
+        return $this->belongsTo(Season::class, 'season_id', 'id');
     }
 
     /**

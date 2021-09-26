@@ -20,6 +20,7 @@ class GameResource extends JsonResource
             'boards_count' => $this->boards_count,
             'boards' => BoardResource::collection($this->whenLoaded('boards')),
             'missions' => GameMissionResource::collection($this->whenLoaded('missions')),
+            'season' => new SeasonResource($this->whenLoaded('season')),
             'created_at' => $this->created_at
         ];
     }

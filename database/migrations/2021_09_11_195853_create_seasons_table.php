@@ -17,7 +17,7 @@ class CreateSeasonsTable extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedTinyInteger('duration');
-            $table->char('missions', 3);
+            $table->char('steps', 3);
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ class CreateGamesTable extends Migration
             $table->foreignId('user_id');
             $table->string('status', 50)->default(\App\Models\Game::STATUS_PENDING);
             $table->unsignedTinyInteger('max_count');
+            $table->foreignId('season_id')->default(1);
             $table->timestamps();
         });
     }
