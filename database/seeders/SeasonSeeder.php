@@ -18,22 +18,22 @@ class SeasonSeeder extends Seeder
             Season::create([
                'name' => 'Spring',
                'duration' => 8,
-               'steps' => 'A,B'
+               'stages' => 'A,B'
             ]);
             Season::create([
                 'name' => 'Summer',
                 'duration' => 8,
-                'steps' => 'B,C'
+                'stages' => 'B,C'
             ]);
             Season::create([
                 'name' => 'Autumn',
                 'duration' => 7,
-                'steps' => 'C,D'
+                'stages' => 'C,D'
             ]);
             Season::create([
                 'name' => 'Winter',
                 'duration' => 6,
-                'steps' => 'D,A'
+                'stages' => 'D,A'
             ]);
         }
     }
