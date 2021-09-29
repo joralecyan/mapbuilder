@@ -25,7 +25,7 @@ class Task extends Model
      */
     public function items(): BelongsToMany
     {
-        return $this->belongsToMany(Item::class, 'task_items');
+        return $this->belongsToMany(Item::class, 'task_items', 'item_id', 'task_id');
     }
 
     /**
@@ -33,6 +33,6 @@ class Task extends Model
      */
     public function figures(): BelongsToMany
     {
-        return $this->belongsToMany(Figure::class, 'task_figures');
+        return $this->belongsToMany(Figure::class, 'task_figures', 'figure_id', 'task_id');
     }
 }

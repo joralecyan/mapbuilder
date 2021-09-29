@@ -1,7 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\BoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,17 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login',  [\App\Http\Controllers\AuthController::class, 'login']);
-Route::post('/register',  [\App\Http\Controllers\AuthController::class, 'register']);
+Route::post('/login',  [AuthController::class, 'login']);
+Route::post('/register',  [AuthController::class, 'register']);
 
 Route::group(['middleware' =>  'auth:sanctum'], function (){
-    Route::get('/user',  [\App\Http\Controllers\UserController::class, 'getUser']);
+    Route::get('/user',  [UserController::class, 'getUser']);
 
-    Route::get('/games/{id}',  [\App\Http\Controllers\GameController::class, 'getGame']);
-    Route::get('/games',  [\App\Http\Controllers\GameController::class, 'getGames']);
-    Route::post('/games',  [\App\Http\Controllers\GameController::class, 'store']);
-    Route::post('/games/{id}/enroll',  [\App\Http\Controllers\GameController::class, 'enroll']);
+    Route::get('/games/{id}',  [GameController::class, 'getGame']);
+    Route::get('/games',  [GameController::class, 'getGames']);
+    Route::post('/games',  [GameController::class, 'store']);
+    Route::post('/games/{id}/enroll',  [GameController::class, 'enroll']);
 
-    Route::get('/boards/{id}',  [\App\Http\Controllers\BoardController::class, 'getBoard']);
-    Route::patch('/boards/{id}',  [\App\Http\Controllers\BoardController::class, 'update']);
+    Route::get('/boards/{id}',  [BoardController::class, 'getBoard']);
+    Route::patch('/boards/{id}',  [BoardController::class, 'update']);
 });

@@ -17,5 +17,5 @@ class Season extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['name', 'duration', 'steps'];
+    protected $fillable = ['name', 'duration', 'stages'];
 }

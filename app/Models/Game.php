@@ -46,7 +46,15 @@ class Game extends Model
      */
     public function missions(): HasMany
     {
-        return $this->hasMany(GameMission::class, 'game_id');
+        return $this->hasMany(GameMission::class, 'game_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(GameTask::class, 'game_id', 'id');
     }
 
     /**

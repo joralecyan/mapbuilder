@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameResource;
+use App\Http\Resources\TaskResource;
 use App\Http\Resources\UserResource;
 use App\Models\Board;
 use App\Models\Game;
@@ -79,6 +80,8 @@ class GameController extends Controller
 
         if(count($game->boards) == $game->max_count){
             $this->game_service->storeMissions($game);
+            $task = $this->game_service->newTask($game);
+            return response()->json(['status' => 'success', 'task' => new TaskResource($task)], 200);
         }
 
         return response()->json(['status' => 'success'], 200);

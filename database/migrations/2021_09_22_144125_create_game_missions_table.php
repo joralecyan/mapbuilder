@@ -17,7 +17,7 @@ class CreateGameMissionsTable extends Migration
             $table->id();
             $table->foreignId('game_id');
             $table->foreignId('mission_id');
-            $table->enum('step', ['A', 'B', 'C', 'D']);
+            $table->enum('stage', ['A', 'B', 'C', 'D']);
             $table->timestamps();
         });
     }
