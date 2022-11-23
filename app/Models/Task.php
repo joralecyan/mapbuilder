@@ -10,6 +10,8 @@ class Task extends Model
 {
     use HasFactory;
 
+    const TYPE_GOBLIN = 'goblin';
+
     /**
      * @var string
      */

@@ -81,6 +81,7 @@ class GameController extends Controller
         if(count($game->boards) == $game->max_count){
             $this->game_service->storeMissions($game);
             $task = $this->game_service->newTask($game);
+            $task->load('figures', 'items');
             return response()->json(['status' => 'success', 'task' => new TaskResource($task)], 200);
         }
 

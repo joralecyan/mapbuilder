@@ -23,7 +23,7 @@ class GameService
         $water_ground_mission = Mission::whereType('water_ground')->inRandomOrder()->take(1)->pluck('id')->toArray();
         $missions = array_merge($tree_mission, $figure_mission, $house_mission, $water_ground_mission);
         $missions_stages = ['A', 'B', 'C', 'D'];
-        foreach ($missions as $key => $value){
+        foreach ($missions as $key => $value) {
             GameMission::create([
                 'game_id' => $game->id,
                 'mission_id' => $value,
@@ -43,15 +43,15 @@ class GameService
         $season_used_tasks_ids = $game->tasks()->where('season_id', $game->season_id)->pluck('task_id')->toArray();
         $used_tasks_ids = $game->tasks()->pluck('task_id')->toArray();
         $tasks = Task::whereNotIn('id', $season_used_tasks_ids)
-            ->where('type', '!=', 'goblin');
-        $attacks = Task::whereNotIn('id', $used_tasks_ids)->where('type', 'goblin')->take($game->season_id);
+            ->where('type', '!=', Task::TYPE_GOBLIN);
+        $attacks = Task::whereNotIn('id', $used_tasks_ids)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
         $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
-       GameTask::create([
-           'game_id' => $game->id,
-           'task_id' => $task->id,
-           'season_id' => $game->season_id
-       ]);
+        GameTask::create([
+            'game_id' => $game->id,
+            'task_id' => $task->id,
+            'season_id' => $game->season_id
+        ]);
 
-       return $task;
+        return $task;
     }
 }
