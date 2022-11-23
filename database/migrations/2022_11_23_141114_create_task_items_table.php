@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGameTasksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateGameTasksTable extends Migration
      */
     public function up()
     {
-        Schema::create('game_tasks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('game_id');
-            $table->foreignId('task_id');
-            $table->foreignId('season_id');
-            $table->timestamps();
+        Schema::create('task_items', function (Blueprint $table) {
+            $table->foreignId('task_id')->constrained();
+            $table->foreignId('item_id')->constrained();
         });
     }
 
@@ -29,6 +26,6 @@ class CreateGameTasksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('game_tasks');
+        Schema::dropIfExists('task_items');
     }
-}
+};

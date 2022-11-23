@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFiguresTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateFiguresTable extends Migration
      */
     public function up()
     {
-        Schema::create('figures', function (Blueprint $table) {
+        Schema::create('game_missions', function (Blueprint $table) {
             $table->id();
-            $table->string('figure');
-            $table->unsignedTinyInteger('is_extra')->default(0);
+            $table->foreignId('game_id');
+            $table->foreignId('mission_id');
+            $table->enum('stage', ['A', 'B', 'C', 'D']);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateFiguresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('figures');
+        Schema::dropIfExists('game_missions');
     }
-}
+};

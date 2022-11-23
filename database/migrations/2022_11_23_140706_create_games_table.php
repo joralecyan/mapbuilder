@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Game;
 
-class CreateMissionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +14,12 @@ class CreateMissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('missions', function (Blueprint $table) {
+        Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->enum('type', ['figure', 'tree', 'house', 'water_ground']);
-            $table->text('description');
+            $table->foreignId('user_id');
+            $table->string('status', 50)->default(Game::STATUS_PENDING);
+            $table->unsignedTinyInteger('max_count');
+            $table->foreignId('season_id')->default(1);
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateMissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('missions');
+        Schema::dropIfExists('games');
     }
-}
+};
