@@ -6,6 +6,7 @@ use App\Models\Game;
 use App\Models\GameMission;
 use App\Models\GameTask;
 use App\Models\Mission;
+use App\Models\Season;
 use App\Models\Task;
 
 class GameService
@@ -34,23 +35,27 @@ class GameService
 
     /**
      * @param Game $game
-     * @return Task
+     * @return void
      */
-    public function newTask(Game $game): Task
+    public function newTask(Game $game): void
     {
         $seasonUsedTasksIds = $game->tasks()->where('season_id', $game->season_id)
             ->pluck('task_id')->toArray();
-        $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
-        $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
-            ->where('type', '!=', Task::TYPE_GOBLIN);
-        $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
-        $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
-        GameTask::create([
-            'game_id' => $game->id,
-            'task_id' => $task->id,
-            'season_id' => $game->season_id
-        ]);
-
-        return $task;
+        $duration = Task::whereNotIn('id', $seasonUsedTasksIds)->sum('duration');
+        if ($duration >= $game->season->duration) {
+            if ($game->season->stages != Season::LAST) {
+                $game->update(['season_id' => $game->season_id++]);
+                $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
+                $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
+                    ->where('type', '!=', Task::TYPE_GOBLIN);
+                $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
+                $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
+                GameTask::create([
+                    'game_id' => $game->id,
+                    'task_id' => $task->id,
+                    'season_id' => $game->season_id
+                ]);
+            }
+        }
     }
 }

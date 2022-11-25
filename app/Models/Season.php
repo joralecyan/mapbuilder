@@ -9,6 +9,8 @@ class Season extends Model
 {
     use HasFactory;
 
+    const LAST = 'D,A';
+
     /**
      * @var string
      */
