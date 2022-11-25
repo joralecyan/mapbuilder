@@ -3,13 +3,14 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Request;
 
 class GameResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -17,6 +18,7 @@ class GameResource extends JsonResource
         return [
             'id' => $this->id,
             'max_count' => $this->max_count,
+            'last_task' => new GameTaskResource($this->whenLoaded('last_task')),
             'boards_count' => $this->boards_count,
             'boards' => BoardResource::collection($this->whenLoaded('boards')),
             'missions' => GameMissionResource::collection($this->whenLoaded('missions')),

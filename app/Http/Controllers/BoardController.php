@@ -5,33 +5,47 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BoardRequest;
 use App\Http\Resources\BoardResource;
 use App\Models\Board;
+use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class BoardController extends Controller
 {
-    /**
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getBoard($id): JsonResponse
-    {
-        $board = Board::find($id);
+    protected GameService $gameService;
 
+    /**
+     * BoardController constructor.
+     * @param GameService $gameService
+     */
+    public function __construct(GameService $gameService)
+    {
+        $this->gameService = $gameService;
+    }
+
+    /**
+     * @param Board $board
+     * @return JsonResponse
+     */
+    public function getBoard(Board $board): JsonResponse
+    {
         return response()->json(['status' => 'success', 'board' => new BoardResource($board)], 200);
     }
 
     /**
-     * @param $id
+     * @param Board $board
      * @param BoardRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update($id, BoardRequest $request): JsonResponse
+    public function update(Board $board, BoardRequest $request): JsonResponse
     {
-        $board = Board::find($id);
+        $round = $board->round++;
         $board->update([
-            'map' => $request->map
+            'map' => $request->map,
+            'round' => $round,
         ]);
+
+        if ($board->game->boards()->avg('round') == $round) {
+            $this->gameService->newTask($board->game);
+        }
 
         return response()->json(['status' => 'success'], 200);
     }

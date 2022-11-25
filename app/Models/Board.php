@@ -18,7 +18,7 @@ class Board extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['user_id', 'game_id', 'map'];
+    protected $fillable = ['user_id', 'game_id', 'round', 'map'];
 
     /**
      * @var string[]

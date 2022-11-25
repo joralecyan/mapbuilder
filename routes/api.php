@@ -23,11 +23,12 @@ Route::post('/register',  [AuthController::class, 'register']);
 Route::group(['middleware' =>  'auth:sanctum'], function (){
     Route::get('/user',  [UserController::class, 'getUser']);
 
-    Route::get('/games/{id}',  [GameController::class, 'getGame']);
+    Route::get('/games/{game}',  [GameController::class, 'getGame']);
     Route::get('/games',  [GameController::class, 'getGames']);
+    Route::get('/games/{game}/last-task',  [GameController::class, 'getLastTask']);
     Route::post('/games',  [GameController::class, 'store']);
-    Route::post('/games/{id}/enroll',  [GameController::class, 'enroll']);
+    Route::post('/games/{game}/enroll',  [GameController::class, 'enroll']);
 
-    Route::get('/boards/{id}',  [BoardController::class, 'getBoard']);
-    Route::patch('/boards/{id}',  [BoardController::class, 'update']);
+    Route::get('/boards/{board}',  [BoardController::class, 'getBoard']);
+    Route::patch('/boards/{board}',  [BoardController::class, 'update']);
 });

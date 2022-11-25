@@ -15,11 +15,11 @@ class GameService
      */
     public function storeMissions(Game $game): void
     {
-        $tree_mission = Mission::whereType('tree')->inRandomOrder()->take(1)->pluck('id')->toArray();
-        $figure_mission = Mission::whereType('figure')->inRandomOrder()->take(1)->pluck('id')->toArray();
-        $house_mission = Mission::whereType('house')->inRandomOrder()->take(1)->pluck('id')->toArray();
-        $water_ground_mission = Mission::whereType('water_ground')->inRandomOrder()->take(1)->pluck('id')->toArray();
-        $missions = array_merge($tree_mission, $figure_mission, $house_mission, $water_ground_mission);
+        $treeMissions = Mission::whereType('tree')->inRandomOrder()->take(1)->pluck('id')->toArray();
+        $figureMissions = Mission::whereType('figure')->inRandomOrder()->take(1)->pluck('id')->toArray();
+        $houseMissions = Mission::whereType('house')->inRandomOrder()->take(1)->pluck('id')->toArray();
+        $waterGroundMissions = Mission::whereType('water_ground')->inRandomOrder()->take(1)->pluck('id')->toArray();
+        $missions = array_merge($treeMissions, $figureMissions, $houseMissions, $waterGroundMissions);
         $missions_stages = ['A', 'B', 'C', 'D'];
         foreach ($missions as $key => $value) {
             GameMission::create([
@@ -38,11 +38,12 @@ class GameService
      */
     public function newTask(Game $game): Task
     {
-        $season_used_tasks_ids = $game->tasks()->where('season_id', $game->season_id)->pluck('task_id')->toArray();
-        $used_tasks_ids = $game->tasks()->pluck('task_id')->toArray();
-        $tasks = Task::whereNotIn('id', $season_used_tasks_ids)
+        $seasonUsedTasksIds = $game->tasks()->where('season_id', $game->season_id)
+            ->pluck('task_id')->toArray();
+        $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
+        $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
             ->where('type', '!=', Task::TYPE_GOBLIN);
-        $attacks = Task::whereNotIn('id', $used_tasks_ids)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
+        $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
         $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
         GameTask::create([
             'game_id' => $game->id,

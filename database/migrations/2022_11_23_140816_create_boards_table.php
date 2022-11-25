@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('game_id');
+            $table->integer('round')->default(0);
             $table->text('map');
             $table->timestamps();
         });

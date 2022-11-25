@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Game extends Model
 {
@@ -54,6 +55,14 @@ class Game extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(GameTask::class, 'game_id', 'id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function last_task(): HasOne
+    {
+        return $this->hasOne(GameTask::class, 'game_id', 'id')->latest();
     }
 
     /**
