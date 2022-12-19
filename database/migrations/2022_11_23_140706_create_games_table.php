@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('status', 50)->default(Game::STATUS_PENDING);
-            $table->unsignedTinyInteger('max_count');
+            $table->unsignedTinyInteger('max_players');
             $table->foreignId('season_id')->default(1);
             $table->timestamps();
         });

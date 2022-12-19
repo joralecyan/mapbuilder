@@ -61,7 +61,7 @@ class GameController extends Controller
     {
         $user = $request->user();
         $game = Game::create([
-            'max_count' => $request->max_count,
+            'max_players' => $request->get('max_players'),
             'user_id' => $user->id,
         ]);
 
@@ -80,7 +80,7 @@ class GameController extends Controller
         $user = $request->user();
         $this->boardService->initBoard($game->id, $user->id);
 
-        if(count($game->boards) == $game->max_count){
+        if(count($game->boards) == $game->max_players){
             $this->gameService->storeMissions($game);
             $this->gameService->newTask($game);
         }

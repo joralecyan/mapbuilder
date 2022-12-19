@@ -23,7 +23,7 @@ class Game extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['user_id', 'status', 'max_count', 'season_id'];
+    protected $fillable = ['user_id', 'status', 'max_players', 'season_id'];
 
     /**
      * @return BelongsTo

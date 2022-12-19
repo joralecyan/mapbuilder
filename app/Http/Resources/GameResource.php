@@ -17,7 +17,7 @@ class GameResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'max_count' => $this->max_count,
+            'max_players' => $this->max_players,
             'last_task' => new GameTaskResource($this->whenLoaded('last_task')),
             'boards_count' => $this->boards_count,
             'boards' => BoardResource::collection($this->whenLoaded('boards')),
