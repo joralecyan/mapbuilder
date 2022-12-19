@@ -50,7 +50,11 @@ class GameController extends Controller
      */
     public function getLastTask(Game $game): JsonResponse
     {
-        return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($game->last_task->task)], 200);
+        if ($game->last_task) {
+            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($game->last_task->task)], 200);
+        }
+
+        return response()->json(['status' => 'error', 'message' =>  'There are no task created yet'], 400);
     }
 
     /**
