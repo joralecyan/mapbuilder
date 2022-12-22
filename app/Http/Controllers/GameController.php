@@ -42,7 +42,6 @@ class GameController extends Controller
      */
     public function getGames(): JsonResponse
     {
-        (new GameEvent(2, 'Hello Andranik'))->emit();
         $games = Game::withCount('boards')->pending()->latest()->paginate(m_per_page());
 
         return response()->json(['status' => 'success', 'games' =>  GameResource::collection($games)], 200);
@@ -91,7 +90,7 @@ class GameController extends Controller
         if(count($game->boards) == $game->max_players){
             $this->gameService->storeMissions($game);
             $this->gameService->newTask($game);
-            (new GameEvent($game->id, 'Started'))->emit();
+          //  (new GameEvent($game->id, 'Started'))->emit();
         }
 
         return response()->json(['status' => 'success'], 200);

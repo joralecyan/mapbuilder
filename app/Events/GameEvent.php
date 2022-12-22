@@ -38,8 +38,7 @@ class GameEvent
      */
     public function emit(): void
     {
-//        $version = new Version2X(config('socket.host') . ':' . config('socket.port'));
-        $version = new Version2X(config('socket.host'));
+        $version = new Version2X(config('socket.host') . ':' . config('socket.port'));
         $client = new Client($version);
 
         $client->initialize();
