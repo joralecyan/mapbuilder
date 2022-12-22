@@ -8,6 +8,8 @@ use App\Http\Resources\TaskResource;
 use App\Models\Game;
 use App\Services\BoardService;
 use App\Services\GameService;
+use ElephantIO\Client;
+use ElephantIO\Engine\SocketIO\Version2X;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -32,6 +34,15 @@ class GameController extends Controller
     public function getGame(Game $game): JsonResponse
     {
         $game->load('boards.user', 'missions', 'season', 'last_task');
+
+        $version = new Version2X('18.207.226.192:3000');
+        $client = new Client($version);
+
+        $client->initialize();
+        $client->emit('message-server', [
+            'message' => 'hello'
+        ]);
+        $client->close();
 
         return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
     }
