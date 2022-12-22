@@ -31,7 +31,8 @@ class GameController extends Controller
      */
     public function getGame(Game $game): JsonResponse
     {
-        $game->load('boards.user', 'missions', 'season', 'last_task');
+        $game->load('boards.user', 'missions', 'season', 'last_task', 'last_task.task.figures', 'last_task.task.items');
+
         return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
     }
 
@@ -41,6 +42,7 @@ class GameController extends Controller
     public function getGames(): JsonResponse
     {
         $games = Game::withCount('boards')->pending()->latest()->paginate(m_per_page());
+
         return response()->json(['status' => 'success', 'games' =>  GameResource::collection($games)], 200);
     }
 
@@ -51,7 +53,9 @@ class GameController extends Controller
     public function getLastTask(Game $game): JsonResponse
     {
         if ($game->last_task) {
-            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($game->last_task->task)], 200);
+            $task = $game->last_task->task;
+            $task->load('figures', 'items');
+            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($task)], 200);
         }
 
         return response()->json(['status' => 'error', 'message' =>  'There are no task created yet'], 400);
