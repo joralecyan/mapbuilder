@@ -31,7 +31,7 @@ class GameController extends Controller
      */
     public function getGame(Game $game): JsonResponse
     {
-        $game->load('boards.user', 'missions', 'season', 'last_task', 'last_task.task.figures', 'last_task.task.items');
+        $game->load('boards.user', 'missions', 'season', 'last_task');
 
         return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
     }
@@ -54,8 +54,7 @@ class GameController extends Controller
     {
         if ($game->last_task) {
             $task = $game->last_task->task;
-            $task->load('figures', 'items');
-            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($task)], 200);
+            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource()], 200);
         }
 
         return response()->json(['status' => 'error', 'message' =>  'There are no task created yet'], 400);
