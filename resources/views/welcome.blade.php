@@ -11,14 +11,6 @@
         <div class="chat-content">
             <ul></ul>
         </div>
-
-        <div class="chat-section">
-            <div class="chat-box">
-                <div class="chat-input bg-primary" id="chatInput" contenteditable="">
-
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -31,19 +23,7 @@
         let socket_port = '{{config('socket.port')}}';
         let socket = io(ip_address + ':' + socket_port);
 
-        let chatInput = $('#chatInput');
-
-        chatInput.keypress(function(e) {
-            let message = $(this).html();
-            console.log(message);
-            if(e.which === 13 && !e.shiftKey) {
-                socket.emit(1, message);
-                chatInput.html('');
-                return false;
-            }
-        });
-
-        socket.on('game_1', (message) => {
+        socket.on('game_2', (message) => {
             $('.chat-content ul').append(`<li>${message.event}</li>`);
         });
     });
