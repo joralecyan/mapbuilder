@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameEvent;
 use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Game;
 use App\Services\BoardService;
 use App\Services\GameService;
-use ElephantIO\Client;
-use ElephantIO\Engine\SocketIO\Version2X;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -35,15 +34,6 @@ class GameController extends Controller
     {
         $game->load('boards.user', 'missions', 'season', 'last_task');
 
-        $version = new Version2X('18.207.226.192:3000');
-        $client = new Client($version);
-
-        $client->initialize();
-        $client->emit('message-server', [
-            'message' => 'hello'
-        ]);
-        $client->close();
-
         return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
     }
 
@@ -64,8 +54,7 @@ class GameController extends Controller
     public function getLastTask(Game $game): JsonResponse
     {
         if ($game->last_task) {
-            $task = $game->last_task->task;
-            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource()], 200);
+            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($game->last_task->task)], 200);
         }
 
         return response()->json(['status' => 'error', 'message' =>  'There are no task created yet'], 400);
@@ -101,6 +90,7 @@ class GameController extends Controller
         if(count($game->boards) == $game->max_players){
             $this->gameService->storeMissions($game);
             $this->gameService->newTask($game);
+            (new GameEvent($game->id, 'Started'))->emit();
         }
 
         return response()->json(['status' => 'success'], 200);

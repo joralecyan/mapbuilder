@@ -5,15 +5,16 @@ const app = express();
 const server = require('http').createServer(app);
 
 const io = require('socket.io')(server, {
-    cors: { origin: "*"}
+    cors: { origin: "*"},
+    allowEIO3: true
 });
 
 io.on('connection', (socket) => {
     console.log('connection');
 
-    socket.on('sendChatToServer', (message) => {
+    socket.on('to_server', (message) => {
         console.log(message);
-        socket.broadcast.emit('sendChatToClient', message);
+        socket.broadcast.emit(message.room, message);
     });
 
     socket.on('disconnect', (socket) => {

@@ -27,12 +27,24 @@
 
 <script>
     $(function() {
-        let ip_address = '18.207.226.192';
-        let socket_port = '3000';
+        let ip_address = '{{config('socket.host')}}';
+        let socket_port = '{{config('socket.port')}}';
         let socket = io(ip_address + ':' + socket_port);
 
-        socket.on('sendChatToClient', (message) => {
-            $('.chat-content ul').append(`<li>${message.message}</li>`);
+        let chatInput = $('#chatInput');
+
+        chatInput.keypress(function(e) {
+            let message = $(this).html();
+            console.log(message);
+            if(e.which === 13 && !e.shiftKey) {
+                socket.emit(1, message);
+                chatInput.html('');
+                return false;
+            }
+        });
+
+        socket.on('game_1', (message) => {
+            $('.chat-content ul').append(`<li>${message.event}</li>`);
         });
     });
 </script>
