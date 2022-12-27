@@ -90,7 +90,7 @@ class GameController extends Controller
         if(count($game->boards) == $game->max_players){
             $this->gameService->storeMissions($game);
             $this->gameService->newTask($game);
-          //  (new GameEvent($game->id, 'Started'))->emit();
+          //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
         }
 
         return response()->json(['status' => 'success'], 200);

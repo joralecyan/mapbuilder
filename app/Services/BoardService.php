@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Models\Board;
+use App\Models\BoardPoint;
 
 class BoardService
 {
@@ -13,11 +14,16 @@ class BoardService
      */
     public function initBoard($game_id, $user_id): void
     {
-        Board::create([
+        $board = Board::firstOrCreate([
             'game_id' => $game_id,
             'user_id' => $user_id,
+        ], [
             'map' => self::getEmptyMap()
         ]);
+
+        BoardPoint::firstOrCreate([
+            'board_id' => $board->id
+        ], []);
     }
 
     /**
