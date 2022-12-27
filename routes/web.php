@@ -17,3 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 //    abort(404);
 });
+
+Route::get('/test',  [\App\Http\Controllers\TestController::class, 'test']);

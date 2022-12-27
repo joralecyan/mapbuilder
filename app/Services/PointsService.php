@@ -60,11 +60,11 @@ class PointsService
         for ($i = 0; $i < count($map); $i++) {
             for ($j = 0; $j < count($map); $j++) {
                 $current = $map[$i][$j];
-                $right = $map[$i][$j + 1] ?? true;
-                $left = $map[$i][$j - 1] ?? true;
-                $up = $map[$i + 1][$j] ?? true;
-                $down = $map[$i - 1][$j] ?? true;
-                if (!$current && $right && $left && $up && $down) {
+                $right = $map[$i][$j + 1] ?? 1;
+                $left = $map[$i][$j - 1] ?? 1;
+                $up = $map[$i + 1][$j] ?? 1;
+                $down = $map[$i - 1][$j] ?? 1;
+                if (m_empty($current) && !m_empty($right) && !m_empty($left) && !m_empty($up) && !m_empty($down)) {
                     $points++;
                 }
             }
@@ -79,22 +79,39 @@ class PointsService
      */
     public function calculateLostPrincipality(Board $board): int
     {
-        $points = 0;
         $map = $board->map;
         for ($i = 0; $i < count($map); $i++) {
             for ($j = 0; $j < count($map); $j++) {
-                $current = $map[$i][$j];
-                $right = $map[$i][$j + 1] ?? true;
-                $left = $map[$i][$j - 1] ?? true;
-                $up = $map[$i + 1][$j] ?? true;
-                $down = $map[$i - 1][$j] ?? true;
-                if (!$current && $right && $left && $up && $down) {
-                    $points++;
+                if (!m_empty($map[$i][$j])) {
+                    $map[$i][$j] = 1;
+                }else{
+                    $map[$i][$j] = 0;
                 }
             }
         }
 
-        return $points;
+        $max = 0;
+        $maxArray = [];
+
+        for ($i = 0; $i < 2; $i++) {
+            $maxArray[$i] = array_fill(0, count($map), 0);
+        }
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                $entries = $map[$i][$j];
+                if ($entries) {
+                    if ($j) {
+                        $entries = 1 + min($maxArray[1][$j - 1], min($maxArray[0][$j - 1], $maxArray[1][$j]));
+                    }
+                }
+                $maxArray[0][$j] = $maxArray[1][$j];
+                $maxArray[1][$j] = $entries;
+                $max = max($max, $entries);
+            }
+        }
+
+        return 3 * $max;
     }
 
 
