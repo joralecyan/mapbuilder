@@ -424,6 +424,61 @@ class PointsService
     }
 
     /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateGoldmine(Board $board): int
+    {
+
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateUntouchedShores(Board $board): int
+    {
+
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateWizardsValley(Board $board): int
+    {
+
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateLakeside(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                $current = $map[$i][$j];
+                $right = $map[$i][$j + 1] ?? 0;
+                $left = $map[$i][$j - 1] ?? 0;
+                $up = $map[$i + 1][$j] ?? 0;
+                $down = $map[$i - 1][$j] ?? 0;
+                if (m_water($current) && (m_ground($right) || m_ground($left) || m_ground($up) || m_ground($down))) {
+                    $points++;
+                }
+                if (m_ground($current) && (m_water($right) || m_water($left) || m_water($up) || m_water($down))) {
+                    $points++;
+                }
+            }
+        }
+
+        return $points;
+    }
+
+    /**
      * @param int $x
      * @param int $y
      * @param bool $withHills
