@@ -10,6 +10,6 @@ class TestController extends Controller
 {
     public function test()
     {
-       dd( (new PointsService())->calculateVastExpanses(Board::find(1)));
+       dd( (new PointsService())->calculatePromisedLand(Board::find(1)));
     }
 }

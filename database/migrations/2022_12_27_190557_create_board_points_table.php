@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('board_points', function (Blueprint $table) {
             $table->id();
             $table->foreignId('board_id');
-            $table->integer('coins');
-            $table->integer('AB_points');
-            $table->integer('BC_points');
-            $table->integer('CD_points');
-            $table->integer('DA_points');
+            $table->integer('coins')->default(0);
+            $table->integer('AB_points')->default(0);
+            $table->integer('BC_points')->default(0);
+            $table->integer('CD_points')->default(0);
+            $table->integer('DA_points')->default(0);
             $table->timestamps();
         });
     }

@@ -10,6 +10,16 @@ use App\Models\Mission;
 class PointsService
 {
     /**
+     * @var array
+     */
+    protected array $map = [];
+
+    /**
+     * @var array
+     */
+    protected array $execute = [];
+
+    /**
      * @param Game $game
      * @return void
      */
@@ -152,7 +162,7 @@ class PointsService
                 if (m_empty($map[$i][$j])) {
                     break;
                 }
-                if($j == count($map) - 1){
+                if ($j == count($map) - 1) {
                     $points += 6;
                 }
             }
@@ -160,13 +170,309 @@ class PointsService
                 if (m_empty($map[$j][$i])) {
                     break;
                 }
-                if($j == count($map) - 1){
+                if ($j == count($map) - 1) {
                     $points += 6;
                 }
             }
         }
 
         return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateGiantTree(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                $current = $map[$i][$j];
+                $right = $map[$i][$j + 1] ?? 1;
+                $left = $map[$i][$j - 1] ?? 1;
+                $up = $map[$i + 1][$j] ?? 1;
+                $down = $map[$i - 1][$j] ?? 1;
+                if (m_tree($current) && !m_empty($right) && !m_empty($left) && !m_empty($up) && !m_empty($down)) {
+                    $points++;
+                }
+            }
+        }
+
+        return $points;
+    }
+
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateMountainForest(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                // todo find algorithm
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateSentinelForest(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            if (m_tree($map[0][$i])) {
+                $points++;
+            }
+        }
+
+        for ($i = 0; $i < count($map); $i++) {
+            if (m_tree($map[count($map) - 1][$i])) {
+                $points++;
+            }
+        }
+
+        for ($i = 1; $i < count($map) - 1; $i++) {
+            if (m_tree($map[$i][0])) {
+                $points++;
+            }
+        }
+
+        for ($i = 1; $i < count($map) - 1; $i++) {
+            if (m_tree($map[$i][count($map) - 1])) {
+                $points++;
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateGreenEdge(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_tree($map[$i][$j])) {
+                    $points++;
+                    break;
+                }
+            }
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_tree($map[$j][$i])) {
+                    $points++;
+                    break;
+                }
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateCommunity(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_house($map[$i][$j])) {
+                    $map[$i][$j] = 1;
+                } else {
+                    $map[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->map = $map;
+
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if ($this->map[$j][$i] == 1) {
+                    if ($this->blank($i, $j) >= 6) {
+                        $points += 8;
+                    }
+                }
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculatePromisedLand(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+        $this->map = $map;
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if (m_house($this->map[$j][$i])) {
+                    if ($this->blankFull($i, $j) > 0 && $this->execute >= 3) {
+                        $this->execute = [];
+                        $points += 3;
+                    }
+                }
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateGreatCity(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_house($map[$i][$j])) {
+                    $map[$i][$j] = 1;
+                } elseif (!m_hill($map[$i][$j])) {
+                    $map[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->map = $map;
+        $areas = [];
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if ($this->map[$j][$i] == 1) {
+                    $area = $this->blank($i, $j, true);
+                    if ($area > 0 && $area < 1000) {
+                        $areas[] = $area;
+                    }
+                }
+            }
+        }
+        if (count($areas)) {
+            rsort($areas);
+            $points = $areas[0];
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateOutpost(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_house($map[$i][$j])) {
+                    $map[$i][$j] = 1;
+                } else {
+                    $map[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->map = $map;
+
+        $areas = [];
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if ($this->map[$j][$i] == 1) {
+                    $area = $this->blank($i, $j);
+                    if ($area > 0) {
+                        $areas[] = $area;
+                    }
+                }
+            }
+        }
+
+        if (count($areas) >= 2) {
+            rsort($areas);
+            $points = $areas[1] * 2;
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param bool $withHills
+     * @return int
+     */
+    private function blank(int $x, int $y, bool $withHills = false): int
+    {
+        if ($x < 0 || $x >= count($this->map) || $y < 0 || $y >= count($this->map) || $this->map[$y][$x] == 0 || $this->map[$y][$x] == 7) {
+            return 0;
+        }
+
+        if ($withHills && (m_hill($this->map[$y][$x - 1]) || m_hill($this->map[$y][$x + 1]) || m_hill($this->map[$y - 1][$x]) || m_hill($this->map[$y + 1][$x]))) {
+            return 1000;
+        }
+
+        $this->map[$y][$x] = 0;
+
+        return 1 + $this->blank($x - 1, $y, $withHills) + $this->blank($x + 1, $y, $withHills) + $this->blank($x, $y - 1, $withHills) + $this->blank($x, $y + 1, $withHills);
+    }
+
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @return int
+     */
+    private function blankFull(int $x, int $y): int
+    {
+        if ($x < 0 || $x >= count($this->map) || $y < 0 || $y >= count($this->map) || !m_house($this->map[$y][$x])) {
+            return 0;
+        }
+
+        $neighbours = [$this->map[$y][$x - 1] ?? 0, $this->map[$y][$x + 1] ?? 0, $this->map[$y - 1][$x] ?? 0, $this->map[$y + 1][$x] ?? 0];
+        $this->execute += array_unique($neighbours);
+        if (in_array(0, $this->execute)) {
+            unset($this->execute[array_search(0, $this->execute)]);
+        }
+
+        if (in_array(6, $this->execute)) {
+            unset($this->execute[array_search(6, $this->execute)]);
+        }
+
+        if (in_array(2, $this->execute)) {
+            unset($this->execute[array_search(2, $this->execute)]);
+        }
+
+        $this->map[$y][$x] = 0;
+
+        return 1 + $this->blankFull($x - 1, $y) + $this->blankFull($x + 1, $y) + $this->blankFull($x, $y - 1) + $this->blankFull($x, $y + 1);
     }
 
 
