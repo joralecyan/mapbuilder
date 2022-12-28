@@ -84,7 +84,7 @@ class PointsService
             for ($j = 0; $j < count($map); $j++) {
                 if (!m_empty($map[$i][$j])) {
                     $map[$i][$j] = 1;
-                }else{
+                } else {
                     $map[$i][$j] = 0;
                 }
             }
@@ -112,6 +112,61 @@ class PointsService
         }
 
         return 3 * $max;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateBrokenRoads(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($k = 1; $k <= count($map); $k++) {
+            $m = 0;
+            for ($i = count($map) - $k; $i < count($map); $i++) {
+                if (!m_empty($map[$i][abs(count($map) - $i - $k)])) {
+                    $m++;
+                }
+            }
+            if ($m == $k) {
+                $points += 3;
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateVastExpanses(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_empty($map[$i][$j])) {
+                    break;
+                }
+                if($j == count($map) - 1){
+                    $points += 6;
+                }
+            }
+            for ($j = 0; $j < count($map); $j++) {
+                if (m_empty($map[$j][$i])) {
+                    break;
+                }
+                if($j == count($map) - 1){
+                    $points += 6;
+                }
+            }
+        }
+
+        return $points;
     }
 
 

@@ -27,12 +27,12 @@ class MissionSeeder extends Seeder
                 'description' => 'Get 3 points for each square along one side of the largest square of all filled squares.',
             ]);
             Mission::create([
-                'title' => 'Broken roads',
+                'title' => 'Broken Roads',
                 'type' => 'figure',
                 'description' => 'Score 3 points for each fully filled square diagonal that touches the left and bottom edges of the realm map.',
             ]);
             Mission::create([
-                'title' => 'Vast expanses',
+                'title' => 'Vast Expanses',
                 'type' => 'figure',
                 'description' => 'Get 6 points for each row or column that is completely filled with cells.',
             ]);

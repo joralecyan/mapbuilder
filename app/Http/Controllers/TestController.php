@@ -10,6 +10,6 @@ class TestController extends Controller
 {
     public function test()
     {
-        (new PointsService())->calculateLostPrincipality(Board::find(1));
+       dd( (new PointsService())->calculateVastExpanses(Board::find(1)));
     }
 }
