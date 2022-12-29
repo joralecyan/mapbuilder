@@ -211,14 +211,31 @@ class PointsService
      */
     public function calculateMountainForest(Board $board): int
     {
-        $points = 0;
         $map = $board->map;
 
         for ($i = 0; $i < count($map); $i++) {
             for ($j = 0; $j < count($map); $j++) {
-                // todo find algorithm
+                if (!m_hill($map[$i][$j]) && !m_tree($map[$i][$j])) {
+                    $map[$i][$j] = 0;
+                }
             }
         }
+
+        $this->map = $map;
+        $coordinates = [];
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if (m_tree($this->map[$j][$i])) {
+                    if ($this->blankHills($i, $j) > 0 && count($this->execute) > 1){
+                        $coordinates = array_merge($coordinates, $this->execute);
+                    }
+                }
+                $this->execute = [];
+            }
+        }
+
+        $points = count(array_unique($coordinates)) * 3;
+        $this->execute = [];
 
         return $points;
     }
@@ -461,7 +478,44 @@ class PointsService
      */
     public function calculateUntouchedShores(Board $board): int
     {
+        $points = 0;
+        $map = $board->map;
 
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                if (!m_ground($map[$i][$j]) && !m_water($map[$i][$j])) {
+                    $map[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->map = $map;
+
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if (m_ground($this->map[$j][$i])) {
+                    if ($this->blankUntouched($i, $j, 3) > 0  && !count($this->execute)) {
+                        $points+=3;
+                    }
+                    $this->execute = [];
+                }
+            }
+        }
+
+        $this->map = $map;
+
+        for ($i = 0; $i < count($this->map); ++$i) {
+            for ($j = 0; $j < count($this->map); ++$j) {
+                if (m_water($this->map[$j][$i])) {
+                    if ($this->blankUntouched($i, $j, 4) > 0  && !count($this->execute)) {
+                        $points+=3;
+                    }
+                    $this->execute = [];
+                }
+            }
+        }
+
+        return $points;
     }
 
     /**
@@ -546,13 +600,40 @@ class PointsService
             return 0;
         }
 
-        if ($withHills && (m_hill($this->map[$y][$x - 1]) || m_hill($this->map[$y][$x + 1]) || m_hill($this->map[$y - 1][$x]) || m_hill($this->map[$y + 1][$x]))) {
+        if ($withHills && (m_hill($this->map[$y][$x - 1] ?? 0) || m_hill($this->map[$y][$x + 1] ?? 0) || m_hill($this->map[$y - 1][$x] ?? 0) || m_hill($this->map[$y + 1][$x] ?? 0))) {
             return 1000;
         }
 
         $this->map[$y][$x] = 0;
 
         return 1 + $this->blank($x - 1, $y, $withHills) + $this->blank($x + 1, $y, $withHills) + $this->blank($x, $y - 1, $withHills) + $this->blank($x, $y + 1, $withHills);
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $element
+     * @return int
+     */
+    private function blankUntouched(int $x, int $y, int $element): int
+    {
+        if ($x < 0 || $x >= count($this->map) || $y < 0 || $y >= count($this->map) || $this->map[$y][$x] == 0) {
+            return 0;
+        }
+
+        $neighbours = [$this->map[$y][$x - 1] ?? 1000, $this->map[$y][$x + 1] ?? 1000, $this->map[$y - 1][$x] ?? 1000, $this->map[$y + 1][$x] ?? 1000];
+
+        if (in_array($element, $neighbours)) {
+            $this->execute[] = $element;
+        }
+
+        if (in_array(1000, $neighbours)) {
+            $this->execute[] = 1000;
+        }
+
+        $this->map[$y][$x] = 0;
+
+        return 1 + $this->blankUntouched($x - 1, $y, $element) + $this->blankUntouched($x + 1, $y, $element) + $this->blankUntouched($x, $y - 1, $element) + $this->blankUntouched($x, $y + 1, $element);
     }
 
 
@@ -568,7 +649,7 @@ class PointsService
         }
 
         $neighbours = [$this->map[$y][$x - 1] ?? 0, $this->map[$y][$x + 1] ?? 0, $this->map[$y - 1][$x] ?? 0, $this->map[$y + 1][$x] ?? 0];
-        $this->execute += array_unique($neighbours);
+        $this->execute = array_merge($this->execute, array_unique($neighbours));
         if (in_array(0, $this->execute)) {
             unset($this->execute[array_search(0, $this->execute)]);
         }
@@ -584,6 +665,37 @@ class PointsService
         $this->map[$y][$x] = 0;
 
         return 1 + $this->blankFull($x - 1, $y) + $this->blankFull($x + 1, $y) + $this->blankFull($x, $y - 1) + $this->blankFull($x, $y + 1);
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @return int
+     */
+    private function blankHills(int $x, int $y): int
+    {
+        if ($x < 0 || $x >= count($this->map) || $y < 0 || $y >= count($this->map) || $this->map[$y][$x] == 0) {
+            return 0;
+        }
+
+        if(m_hill($this->map[$y][$x - 1] ?? 0)) {
+            $this->execute[] = $y . '_' . ($x - 1);
+        }
+        if(m_hill($this->map[$y][$x + 1] ?? 0)) {
+            $this->execute[] = $y . '_' . ($x + 1);
+        }
+        if(m_hill($this->map[$y - 1][$x] ?? 0)) {
+            $this->execute[] = ($y - 1) . '_' . $x;
+        }
+        if(m_hill($this->map[$y + 1][$x] ?? 0)) {
+            $this->execute[] = ($y + 1) . '_' . $x;
+        }
+
+        $this->execute = array_unique($this->execute);
+
+        $this->map[$y][$x] = 0;
+
+        return 1 + $this->blankHills($x - 1, $y) + $this->blankHills($x + 1, $y) + $this->blankHills($x, $y - 1) + $this->blankHills($x, $y + 1);
     }
 
 
