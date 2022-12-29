@@ -10,6 +10,6 @@ class TestController extends Controller
 {
     public function test()
     {
-       dd( (new PointsService())->calculatePoints(Board::find(1)));
+       dd( (new PointsService())->calculateGoblins(Board::find(1)));
     }
 }
