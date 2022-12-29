@@ -40,6 +40,16 @@ function m_ground($element): bool
     return $element == 4;
 }
 
+function m_ruins_coordinates(): array
+{
+    return [[1, 5], [2, 1], [2, 9], [8, 1], [8, 9], [9, 5]];
+}
+
+function m_hills_coordinates(): array
+{
+    return [[1, 3], [2, 8], [5, 5], [8, 2], [9, 7]];
+}
+
 
 function m_is_safe(&$M, $row, $col, &$visited): bool
 {

@@ -429,7 +429,30 @@ class PointsService
      */
     public function calculateGoldmine(Board $board): int
     {
+        $points = 0;
+        $map = $board->map;
 
+        $ruins = m_ruins_coordinates();
+
+        foreach ($ruins as $ruin) {
+            if (m_ground($map[$ruin[0]][$ruin[1]])) {
+                $points += 3;
+            }
+            if (m_water($map[$ruin[0]][$ruin[1] + 1])) {
+                $points += 1;
+            }
+            if (m_water($map[$ruin[0]][$ruin[1] - 1])) {
+                $points += 1;
+            }
+            if (m_water($map[$ruin[0] + 1][$ruin[1]])) {
+                $points += 1;
+            }
+            if (m_water($map[$ruin[0] - 1][$ruin[1]])) {
+                $points += 1;
+            }
+        }
+
+        return $points;
     }
 
     /**
@@ -447,7 +470,40 @@ class PointsService
      */
     public function calculateWizardsValley(Board $board): int
     {
+        $points = 0;
+        $map = $board->map;
 
+        $hills = m_hills_coordinates();
+
+        foreach ($hills as $hill) {
+            if (m_water($map[$hill[0]][$hill[1] + 1])) {
+                $points += 2;
+            }
+            if (m_water($map[$hill[0]][$hill[1] - 1])) {
+                $points += 2;
+            }
+            if (m_water($map[$hill[0] + 1][$hill[1]])) {
+                $points += 2;
+            }
+            if (m_water($map[$hill[0] - 1][$hill[1]])) {
+                $points += 2;
+            }
+
+            if (m_ground($map[$hill[0]][$hill[1] + 1])) {
+                $points += 1;
+            }
+            if (m_ground($map[$hill[0]][$hill[1] - 1])) {
+                $points += 1;
+            }
+            if (m_ground($map[$hill[0] + 1][$hill[1]])) {
+                $points += 1;
+            }
+            if (m_ground($map[$hill[0] - 1][$hill[1]])) {
+                $points += 1;
+            }
+        }
+
+        return $points;
     }
 
     /**
