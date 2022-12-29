@@ -44,6 +44,8 @@ class PointsService
             $points += $this->calculateMissionPoints($mission, $boardPoint->board);
         }
 
+        $points -= $this->calculateGoblins($boardPoint->board);
+
         $boardPoint->update([implode('', $stages) . '_points' => $points]);
 
         return $points;
@@ -57,6 +59,33 @@ class PointsService
     public function calculateMissionPoints(Mission $mission, Board $board): int
     {
         return $this->{'calculate' . str_replace(' ', '', $mission->title)}($board);
+    }
+
+    /**
+     * @param Board $board
+     * @return int
+     */
+    public function calculateGoblins(Board $board): int
+    {
+        $points = 0;
+        $map = $board->map;
+
+        for ($i = 0; $i < count($map); $i++) {
+            for ($j = 0; $j < count($map); $j++) {
+                $current = $map[$i][$j];
+                $right = $map[$i][$j + 1] ?? 1;
+                $left = $map[$i][$j - 1] ?? 1;
+                $up = $map[$i + 1][$j] ?? 1;
+                $down = $map[$i - 1][$j] ?? 1;
+                if (m_empty($current)) {
+                    if (m_goblin($right) || m_goblin($left) || m_goblin($up) || m_goblin($down)) {
+                        $points++;
+                    }
+                }
+            }
+        }
+
+        return $points;
     }
 
     /**
@@ -226,7 +255,7 @@ class PointsService
         for ($i = 0; $i < count($this->map); ++$i) {
             for ($j = 0; $j < count($this->map); ++$j) {
                 if (m_tree($this->map[$j][$i])) {
-                    if ($this->blankHills($i, $j) > 0 && count($this->execute) > 1){
+                    if ($this->blankHills($i, $j) > 0 && count($this->execute) > 1) {
                         $coordinates = array_merge($coordinates, $this->execute);
                     }
                 }
@@ -494,8 +523,8 @@ class PointsService
         for ($i = 0; $i < count($this->map); ++$i) {
             for ($j = 0; $j < count($this->map); ++$j) {
                 if (m_ground($this->map[$j][$i])) {
-                    if ($this->blankUntouched($i, $j, 3) > 0  && !count($this->execute)) {
-                        $points+=3;
+                    if ($this->blankUntouched($i, $j, 3) > 0 && !count($this->execute)) {
+                        $points += 3;
                     }
                     $this->execute = [];
                 }
@@ -507,8 +536,8 @@ class PointsService
         for ($i = 0; $i < count($this->map); ++$i) {
             for ($j = 0; $j < count($this->map); ++$j) {
                 if (m_water($this->map[$j][$i])) {
-                    if ($this->blankUntouched($i, $j, 4) > 0  && !count($this->execute)) {
-                        $points+=3;
+                    if ($this->blankUntouched($i, $j, 4) > 0 && !count($this->execute)) {
+                        $points += 3;
                     }
                     $this->execute = [];
                 }
@@ -678,16 +707,16 @@ class PointsService
             return 0;
         }
 
-        if(m_hill($this->map[$y][$x - 1] ?? 0)) {
+        if (m_hill($this->map[$y][$x - 1] ?? 0)) {
             $this->execute[] = $y . '_' . ($x - 1);
         }
-        if(m_hill($this->map[$y][$x + 1] ?? 0)) {
+        if (m_hill($this->map[$y][$x + 1] ?? 0)) {
             $this->execute[] = $y . '_' . ($x + 1);
         }
-        if(m_hill($this->map[$y - 1][$x] ?? 0)) {
+        if (m_hill($this->map[$y - 1][$x] ?? 0)) {
             $this->execute[] = ($y - 1) . '_' . $x;
         }
-        if(m_hill($this->map[$y + 1][$x] ?? 0)) {
+        if (m_hill($this->map[$y + 1][$x] ?? 0)) {
             $this->execute[] = ($y + 1) . '_' . $x;
         }
 
