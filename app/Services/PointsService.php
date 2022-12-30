@@ -41,12 +41,22 @@ class PointsService
         $points = $boardPoint->coins;
         foreach ($stages as $stage) {
             $mission = $boardPoint->board->game->missions()->where('stage', $stage)->first();
-            $points += $this->calculateMissionPoints($mission, $boardPoint->board);
+            $point = $this->calculateMissionPoints($mission, $boardPoint->board);
+            $boardPoint->update([
+                implode('', $stages) . '_points_' . $stage => $point
+            ]);
+            $points += $point;
         }
 
-        $points -= $this->calculateGoblins($boardPoint->board);
+        $goblins = $this->calculateGoblins($boardPoint->board);
+        $points -= $goblins;
+        $total = $boardPoint + $points;
 
-        $boardPoint->update([implode('', $stages) . '_points' => $points]);
+        $boardPoint->update([
+            implode('', $stages) . '_points' => $points,
+            implode('', $stages) . '_goblins' => $goblins,
+            'total' => $total
+        ]);
 
         return $points;
     }

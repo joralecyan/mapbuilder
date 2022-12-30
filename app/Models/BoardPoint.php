@@ -18,7 +18,9 @@ class BoardPoint extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['board_id', 'coins', 'AB_points', 'BC_points', 'CD_points', 'DA_points'];
+    protected $fillable = ['board_id', 'AB_points_A', 'AB_points_B', 'BC_points_B', 'BC_points_C', 'CD_points_C',
+        'CD_points_D', 'DA_points_D', 'DA_points_A', 'AB_coins', 'BC_coins', 'CD_coins', 'DA_coins', 'AB_goblins',
+        'BC_goblins', 'CD_goblins', 'DA_goblins', 'coins', 'AB_points', 'BC_points', 'CD_points', 'DA_points', 'total'];
 
     /**
      * @return BelongsTo
