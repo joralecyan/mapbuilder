@@ -87,10 +87,10 @@ class GameController extends Controller
     public function enroll(Game $game, Request $request): JsonResponse
     {
         $user = $request->user();
-        if($game->boards_count < $game->max_players) {
+        if(count($game->boards) < $game->max_players) {
             $this->boardService->initBoard($game->id, $user->id);
 
-            if($game->boards_count == $game->max_players){
+            if(count($game->boards) == $game->max_players){
                 $this->gameService->storeMissions($game);
                 $this->gameService->newTask($game);
                 //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
