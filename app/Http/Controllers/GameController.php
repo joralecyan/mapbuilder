@@ -11,6 +11,7 @@ use App\Services\BoardService;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class GameController extends Controller
 {
@@ -81,18 +82,23 @@ class GameController extends Controller
      * @param Game $game
      * @param Request $request
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function enroll(Game $game, Request $request): JsonResponse
     {
         $user = $request->user();
-        $this->boardService->initBoard($game->id, $user->id);
+        if($game->boards_count < $game->max_players) {
+            $this->boardService->initBoard($game->id, $user->id);
 
-        if(count($game->boards) == $game->max_players){
-            $this->gameService->storeMissions($game);
-            $this->gameService->newTask($game);
-          //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
+            if($game->boards_count == $game->max_players){
+                $this->gameService->storeMissions($game);
+                $this->gameService->newTask($game);
+                //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
+            }
+
+            return response()->json(['status' => 'success'], 200);
         }
 
-        return response()->json(['status' => 'success'], 200);
+        throw ValidationException::withMessages(['game' => __('Already enrolled')]);
     }
 }
