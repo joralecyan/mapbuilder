@@ -17,8 +17,7 @@ class GameMissionResource extends JsonResource
         return [
             'id' => $this->id,
             'stage' => $this->stage,
-            'mission' => new MissionResource($this->mission),
-            'created_at' => $this->created_at
+            'mission' => new MissionResource($this->mission)
         ];
     }
 }

@@ -35,7 +35,7 @@ class GameController extends Controller
     {
         $game->load('boards.user', 'missions', 'season', 'last_task');
 
-        return response()->json(['status' => 'success', 'game' =>  new GameResource($game)], 200);
+        return response()->json(['status' => 'success', 'game' => new GameResource($game)], 200);
     }
 
     /**
@@ -45,7 +45,7 @@ class GameController extends Controller
     {
         $games = Game::withCount('boards')->pending()->latest()->paginate(m_per_page());
 
-        return response()->json(['status' => 'success', 'games' =>  GameResource::collection($games)], 200);
+        return response()->json(['status' => 'success', 'games' => GameResource::collection($games)], 200);
     }
 
     /**
@@ -55,10 +55,10 @@ class GameController extends Controller
     public function getLastTask(Game $game): JsonResponse
     {
         if ($game->last_task) {
-            return response()->json(['status' => 'success', 'last_task' =>  new TaskResource($game->last_task->task)], 200);
+            return response()->json(['status' => 'success', 'last_task' => new TaskResource($game->last_task->task)], 200);
         }
 
-        return response()->json(['status' => 'error', 'message' =>  'There are no task created yet'], 400);
+        return response()->json(['status' => 'error', 'message' => 'There are no task created yet'], 400);
     }
 
     /**
@@ -87,10 +87,12 @@ class GameController extends Controller
     public function enroll(Game $game, Request $request): JsonResponse
     {
         $user = $request->user();
-        if(count($game->boards) < $game->max_players) {
-            $this->boardService->initBoard($game->id, $user->id);
+        $boardsCount = count($game->boards);
 
-            if(count($game->boards) == $game->max_players){
+        if ($boardsCount < $game->max_players) {
+            $this->boardService->initBoard($game->id, $user->id);
+            $boardsCount++;
+            if ($boardsCount == $game->max_players) {
                 $this->gameService->storeMissions($game);
                 $this->gameService->newTask($game);
                 //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
