@@ -17,6 +17,7 @@ class GameTaskResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'task_id' => $this->task->id,
             'title' => $this->task->title,
             'type' => $this->task->type,
             'duration' => $this->task->duration,
