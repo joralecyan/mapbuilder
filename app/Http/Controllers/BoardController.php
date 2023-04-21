@@ -37,7 +37,7 @@ class BoardController extends Controller
      */
     public function update(Board $board, BoardRequest $request): JsonResponse
     {
-        $round = $board->round++;
+        $round = ++$board->round;
         $board->update([
             'map' => $request->map,
             'round' => $round,
