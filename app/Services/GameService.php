@@ -44,7 +44,7 @@ class GameService
         $duration = Task::whereNotIn('id', $seasonUsedTasksIds)->sum('duration');
         if ($duration >= $game->season->duration) {
             if ($game->season->stages != Season::LAST) {
-                $game->update(['season_id' => $game->season_id++]);
+                $game->update(['season_id' => ++$game->season_id]);
                 $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
                 $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
                     ->where('type', '!=', Task::TYPE_GOBLIN);
