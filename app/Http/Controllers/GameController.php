@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\GameEvent;
 use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Game;
+use App\Models\Season;
 use App\Services\BoardService;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
@@ -71,9 +71,14 @@ class GameController extends Controller
         $game = Game::create([
             'max_players' => $request->get('max_players'),
             'user_id' => $user->id,
+            'season_id' => Season::first()->id,
         ]);
-
         $this->boardService->initBoard($game->id, $user->id);
+
+        $game->loadCount('boards');
+        if ($game->boards_count == $game->max_players) {
+            $this->gameService->startGame($game);
+        }
 
         return response()->json(['status' => 'success', 'game_id' => $game->id], 200);
     }
@@ -93,9 +98,7 @@ class GameController extends Controller
             $this->boardService->initBoard($game->id, $user->id);
             $boardsCount++;
             if ($boardsCount == $game->max_players) {
-                $this->gameService->storeMissions($game);
-                $this->gameService->newTask($game);
-                //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
+                $this->gameService->startGame($game);
             }
 
             return response()->json(['status' => 'success'], 200);

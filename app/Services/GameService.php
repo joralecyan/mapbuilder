@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\GameEvent;
 use App\Models\Game;
 use App\Models\GameMission;
 use App\Models\GameTask;
@@ -11,8 +12,22 @@ use App\Models\Task;
 
 class GameService
 {
+
     /**
      * @param Game $game
+     * @return void
+     */
+    public function startGame(Game $game): void
+    {
+        $this->storeMissions($game);
+        $this->newTask($game);
+        //  (new GameEvent($game->id, 'Started'))->emit(); // Todo work after socket integration
+    }
+
+
+    /**
+     * @param Game $game
+     * @return void
      */
     public function storeMissions(Game $game): void
     {
@@ -42,6 +57,7 @@ class GameService
         $seasonUsedTasksIds = $game->tasks()->where('season_id', $game->season_id)
             ->pluck('task_id')->toArray();
         $duration = Task::whereNotIn('id', $seasonUsedTasksIds)->sum('duration');
+
         if ($duration >= $game->season->duration) {
             if ($game->season->stages != Season::LAST) {
                 $game->update(['season_id' => $game->season_id++]);
