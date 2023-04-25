@@ -33,7 +33,7 @@ class GameController extends Controller
      */
     public function getGame(Game $game): JsonResponse
     {
-        $game->load('boards.user', 'missions', 'season', 'last_task');
+        $game->load('boards.user', 'missions', 'season', 'last_task')->loadCount('boards');
 
         return response()->json(['status' => 'success', 'game' => new GameResource($game)], 200);
     }
