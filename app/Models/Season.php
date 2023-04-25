@@ -11,6 +11,8 @@ class Season extends Model
 
     const LAST = 'D,A';
 
+    const FIRST_SEASON = 1;
+
     /**
      * @var string
      */

@@ -71,7 +71,7 @@ class GameController extends Controller
         $game = Game::create([
             'max_players' => $request->get('max_players'),
             'user_id' => $user->id,
-            'season_id' => Season::first()->id,
+            'season_id' => Season::FIRST_SEASON,
         ]);
         $this->boardService->initBoard($game->id, $user->id);
 

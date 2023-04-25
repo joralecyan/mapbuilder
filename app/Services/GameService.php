@@ -56,22 +56,25 @@ class GameService
     {
         $seasonUsedTasksIds = $game->tasks()->where('season_id', $game->season_id)
             ->pluck('task_id')->toArray();
-        $duration = Task::whereNotIn('id', $seasonUsedTasksIds)->sum('duration');
-
+        $duration = Task::whereIn('id', $seasonUsedTasksIds)->sum('duration');
         if ($duration >= $game->season->duration) {
             if ($game->season->stages != Season::LAST) {
-                $game->update(['season_id' => $game->season_id++]);
-                $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
-                $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
-                    ->where('type', '!=', Task::TYPE_GOBLIN);
-                $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
-                $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
-                GameTask::create([
-                    'game_id' => $game->id,
-                    'task_id' => $task->id,
-                    'season_id' => $game->season_id
-                ]);
+                $game->update(['season_id' => ++$game->season_id]);
+            }else{
+                return;
             }
         }
+
+        $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
+        $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
+            ->where('type', '!=', Task::TYPE_GOBLIN);
+        $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
+        $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
+
+        GameTask::create([
+            'game_id' => $game->id,
+            'task_id' => $task->id,
+            'season_id' => $game->season_id
+        ]);
     }
 }
