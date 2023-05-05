@@ -14,6 +14,7 @@ class Game extends Model
 
     const STATUS_PENDING = 'pending';
     const STATUS_ACTIVE = 'active';
+    const STATUS_COMPLETED = 'completed';
 
     /**
      * @var string

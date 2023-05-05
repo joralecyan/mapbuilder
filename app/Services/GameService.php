@@ -62,6 +62,7 @@ class GameService
             if ($game->season->stages != Season::LAST) {
                 $game->update(['season_id' => ++$game->season_id]);
             }else{
+                $game->update(['status' => Game::STATUS_COMPLETED]);
                 return;
             }
         }
