@@ -68,7 +68,10 @@ class GameService
         $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
         $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
             ->where('type', '!=', Task::TYPE_GOBLIN);
-        $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id);
+        $usedAttackCount = $game->tasks()->where('season_id', $game->season_id)->whereHas('task', function ($q) {
+            return $q->where('type', Task::TYPE_GOBLIN);
+        })->count();
+        $attacks = Task::whereNotIn('id', $usedTasksIds)->where('type', Task::TYPE_GOBLIN)->take($game->season_id - $usedAttackCount);
         $task = $attacks->unionAll($tasks)->inRandomOrder()->first();
 
         GameTask::create([
