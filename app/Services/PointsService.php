@@ -50,11 +50,12 @@ class PointsService
 
         $goblins = $this->calculateGoblins($boardPoint->board);
         $points -= $goblins;
+        $total = $boardPoint->total + $points;
 
         $boardPoint->update([
             implode('', $stages) . '_points' => $points,
             implode('', $stages) . '_goblins' => $goblins,
-            'total' => $points
+            'total' => $total
         ]);
 
         return $points;
