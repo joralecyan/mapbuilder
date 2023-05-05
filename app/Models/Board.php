@@ -20,7 +20,7 @@ class Board extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['user_id', 'game_id', 'round', 'map'];
+    protected $fillable = ['user_id', 'game_id', 'round', 'map', 'is_win'];
 
     /**
      * @var string[]

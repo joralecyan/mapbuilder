@@ -9,14 +9,14 @@ use App\Models\BoardPoint;
 class BoardService
 {
     /**
-     * @param $game_id
-     * @param $user_id
+     * @param $gameId
+     * @param $userId
      */
-    public function initBoard($game_id, $user_id): void
+    public function initBoard($gameId, $userId): void
     {
         $board = Board::firstOrCreate([
-            'game_id' => $game_id,
-            'user_id' => $user_id,
+            'game_id' => $gameId,
+            'user_id' => $userId,
         ], [
             'map' => self::getEmptyMap()
         ]);
@@ -44,5 +44,18 @@ class BoardService
             [0, 0, 0, 0, 0, 6, 0, 7, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
+    }
+
+    /**
+     * @param $game
+     * @return void
+     */
+    public static function markWinner($game): void
+    {
+        $winnerBoard = $game->boards()->with('points', function ($q) {
+            $q->orderBy('total', 'desc');
+        })->orderBy('orders.total', 'desc')->first();
+
+        $winnerBoard->update(['is_win' => 1]);
     }
 }
