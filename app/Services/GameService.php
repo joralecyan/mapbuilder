@@ -63,6 +63,7 @@ class GameService
                 $game->update(['season_id' => ++$game->season_id]);
             }else{
                 $game->update(['status' => Game::STATUS_COMPLETED]);
+                BoardService::markWinner($game);
                 return;
             }
         }
