@@ -58,13 +58,13 @@ class GameService
             ->pluck('task_id')->toArray();
         $duration = Task::whereIn('id', $seasonUsedTasksIds)->sum('duration');
         if ($duration >= $game->season->duration) {
+            (new PointsService())->calculateGamePoints($game);
             if ($game->season->stages != Season::LAST) {
                 $game->update(['season_id' => ++$game->season_id]);
             }else{
                 return;
             }
         }
-
         $usedTasksIds = $game->tasks()->pluck('task_id')->toArray();
         $tasks = Task::whereNotIn('id', $seasonUsedTasksIds)
             ->where('type', '!=', Task::TYPE_GOBLIN);

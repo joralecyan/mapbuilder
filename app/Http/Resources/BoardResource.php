@@ -18,6 +18,7 @@ class BoardResource extends JsonResource
             'id' => $this->id,
             'map' => $this->map,
             'user' => new UserResource($this->user),
+            'points' => new BoardPointResource($this->points),
             'created_at' => $this->created_at,
             'updated_at' => $this->created_at,
         ];
