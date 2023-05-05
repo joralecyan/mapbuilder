@@ -41,7 +41,7 @@ class PointsService
         $points = $boardPoint->coins;
         foreach ($stages as $stage) {
             $mission = $boardPoint->board->game->missions()->where('stage', $stage)->first();
-            $point = $this->calculateMissionPoints($mission, $boardPoint->board);
+            $point = $this->calculateMissionPoints($mission->mission, $boardPoint->board);
             $boardPoint->update([
                 implode('', $stages) . '_points_' . $stage => $point
             ]);
