@@ -54,7 +54,7 @@ class BoardService
     {
         $winnerBoard = $game->boards()->with('points', function ($q) {
             $q->orderBy('total', 'desc');
-        })->orderBy('orders.total', 'desc')->first();
+        })->orderBy('points.total', 'desc')->first();
 
         $winnerBoard->update(['is_win' => 1]);
     }
