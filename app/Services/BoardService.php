@@ -52,9 +52,11 @@ class BoardService
      */
     public static function markWinner($game): void
     {
-        $winnerBoard = $game->boards()->with('points', function ($q) {
-            $q->orderBy('total', 'desc');
-        })->orderBy('points.total', 'desc')->first();
+        $winnerBoard = $game->boards()
+            ->join('board_points', 'boards.id', '=', 'board_points.board_id')
+            ->select('boards.*')
+            ->orderBy('board_points.total', 'desc')
+            ->first();
 
         $winnerBoard->update(['is_win' => 1]);
     }
