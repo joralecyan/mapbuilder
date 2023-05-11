@@ -17,6 +17,5 @@ class TestController extends Controller
             ->orderBy('board_points.total', 'desc')
             ->first();
         $winnerBoard->update(['is_win' => 1]);
-       dd($winnerBoard);
     }
 }

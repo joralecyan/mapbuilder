@@ -43,6 +43,9 @@ class BoardController extends Controller
             'round' => $round,
         ]);
 
+        $stage = str_replace(',', '', $board->game->season->stages);
+        $board->points->update([$stage . '_coins' => $request->get('coins')]);
+
         if ($board->game->boards()->avg('round') == $round) {
             $this->gameService->newTask($board->game);
         }

@@ -24,7 +24,8 @@ class BoardRequest extends FormRequest
     public function rules()
     {
         return [
-            'map' => 'required'
+            'map' => 'required',
+            'coins' => 'required|integer|between:0,21',
         ];
     }
 }

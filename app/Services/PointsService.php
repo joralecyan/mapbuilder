@@ -38,7 +38,8 @@ class PointsService
      */
     public function calculateBoardPoints(BoardPoint $boardPoint, array $stages): int
     {
-        $points = $boardPoint->coins;
+        $coins = $boardPoint->AB_coins + $boardPoint->BC_coins + $boardPoint->CD_coins + $boardPoint->DA_coins;
+        $points = $coins;
         foreach ($stages as $stage) {
             $mission = $boardPoint->board->game->missions()->where('stage', $stage)->first();
             $point = $this->calculateMissionPoints($mission->mission, $boardPoint->board);
@@ -53,6 +54,7 @@ class PointsService
         $total = $boardPoint->total + $points;
 
         $boardPoint->update([
+            'coins' => $coins,
             implode('', $stages) . '_points' => $points,
             implode('', $stages) . '_goblins' => $goblins,
             'total' => $total
