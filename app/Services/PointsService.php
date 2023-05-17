@@ -390,7 +390,8 @@ class PointsService
         for ($i = 0; $i < count($this->map); ++$i) {
             for ($j = 0; $j < count($this->map); ++$j) {
                 if (m_house($this->map[$j][$i])) {
-                    if ($this->blankFull($i, $j) > 0 && $this->execute >= 3) {
+                    $this->blankFull($i, $j);
+                    if (count($this->execute) >= 3) {
                         $this->execute = [];
                         $points += 3;
                     }
@@ -698,14 +699,14 @@ class PointsService
         if (in_array(6, $this->execute)) {
             unset($this->execute[array_search(6, $this->execute)]);
         }
-
         if (in_array(2, $this->execute)) {
             unset($this->execute[array_search(2, $this->execute)]);
         }
 
         $this->map[$y][$x] = 0;
+        $this->execute = array_unique($this->execute);
 
-        return 1 + $this->blankFull($x - 1, $y) + $this->blankFull($x + 1, $y) + $this->blankFull($x, $y - 1) + $this->blankFull($x, $y + 1);
+        return $this->blankFull($x - 1, $y) + $this->blankFull($x + 1, $y) + $this->blankFull($x, $y - 1) + $this->blankFull($x, $y + 1);
     }
 
     /**
